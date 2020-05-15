@@ -12,7 +12,8 @@ package_list <- list("tidyverse",
                      "patchwork",
                      "maps",
                      "jsonlite",
-                     "ggExtra")
+                     "ggExtra",
+                     "treemapify")
 
 # Uncomment to install packages
 # for (package in package_list) {

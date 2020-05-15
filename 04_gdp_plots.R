@@ -171,13 +171,6 @@ season_gdp_detailed <- oly %>%
   drop_na() %>% 
   glimpse()
 
-season_gdp_detailed %>% ggplot() +
-  geom_density(aes(gdp/10^3, colour = Season)) +
-  facet_wrap(~Season ~Year, ncol = 1) +
-  scale_x_continuous(limits = c(0, 75)) +
-  theme(strip.text = element_blank(),
-        axis.text.y = element_blank())
-
 season_gdp_summary <- oly %>%
   filter(Year >= 1994 & gdp < 100*10^3) %>% 
   drop_na() %>% 

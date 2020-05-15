@@ -5,7 +5,7 @@ if (!exists("oly")) {
 }
 
 if (!exists("lat_long_summary")) {
-  lat_long_summary <- readRDS(here("tidy", "oly.rds"))
+  lat_long_summary <- readRDS(here("tidy", "lat_long_summary.rds"))
 }
 
 ### PLOT THEME ----------------------------------------------------------------
@@ -44,12 +44,12 @@ oly_sport %>%
   ggplot(aes(x = Year, y = total_sports)) +
   geom_point(aes(colour = Season)) +
   geom_line(aes(colour = Season)) +
-  geom_text(data = oly_sport_labels, aes(x = Year -20, y = total_sports, label = Season, colour = Season, hjust = 'right')) +
+  geom_text(data = oly_sport_labels, aes(x = Year+2, y = total_sports, label = Season, colour = Season, hjust = 'left')) +
   oly_theme +
   scale_fill_manual(values = c(oly_pal[3], oly_pal[9])) +
   scale_colour_manual(values = c(oly_pal[3], oly_pal[9])) +
   scale_y_continuous(limits = c(0, 35), breaks = seq(0, 35, 5)) +
-  scale_x_continuous(limits = c(1896, 2024), breaks = seq(1896, 2024, 16)) +
+  scale_x_continuous(limits = c(1896, 2024), breaks = seq(1896, 2016, 16)) +
   theme(legend.position = "None", panel.grid.major.x = element_blank()) +
   labs(title = 'Number of sports',
        x = "",
@@ -82,7 +82,7 @@ oly_events %>%
   scale_fill_manual(values = c(oly_pal[3], oly_pal[9])) +
   scale_colour_manual(values = c(oly_pal[3], oly_pal[9])) +
   scale_y_continuous(limits = c(0, 350), breaks = seq(0, 350, 50)) +
-  scale_x_continuous(limits = c(1896, 2024), breaks = seq(1896, 2024, 16)) +
+  scale_x_continuous(limits = c(1896, 2024), breaks = seq(1896, 2016, 16)) +
   theme(legend.position = "None", panel.grid.major.x = element_blank()) +
   labs(title = 'Number of events',
        x = "",
@@ -214,44 +214,16 @@ country_best %>%
             hjust = 'left') +
   coord_flip() +
   oly_theme +
-  labs(title = 'Hosting Olympics oftens leads to best gold medal haul',
-       subtitle = 'Summer Olympic Games at which each country won most gold medals, 1948 onwards',
+  labs(title = 'Summer Olympic Games peak gold medal tally, 1948 onwards',
        x = "",
        y = "",
        caption = 'Unified Team in 1992 consisted of 12 of 15 former Soviet republics') +
   theme(panel.grid.major.y = element_blank(),
         legend.position = "None") +
-  scale_fill_manual(values = c(oly_pal[6], oly_pal[8])) +
-  scale_colour_manual(values = c(oly_pal[8], oly_pal[6])) +
-  scale_y_continuous(limits = c(0, 100), breaks = seq(0, 100, 20))
-
-### PLOT 6 - PARTICIPANTS PER GAME --------------------------------------------
-participants <- oly %>% 
-  group_by(Year, Season) %>% 
-  summarise(participants = n()) %>% 
-  glimpse()
-
-participants_labels <- participants %>% 
-  ungroup() %>% 
-  group_by(Season) %>% 
-  filter(Year == max(Year)) %>% 
-  glimpse()
-
-participants %>% 
-  ggplot(aes(x = Year, y = participants/1000, colour = Season)) + 
-  geom_line() +
-  geom_point() +
-  geom_text(data = participants_labels, aes(x = Year + 2, y = participants/1000, label = Season, colour = Season), hjust = 'left') +
-  oly_theme +
-  scale_color_manual(values = c(oly_pal[1], oly_pal[8])) +
-  labs(title = 'Participants (thousands) per games',
-       x = "",
-       y = "") +
-  theme(panel.grid.major.x = element_blank(),
-        legend.position = "None") +
-  scale_x_continuous(limits = c(1896, 2024), breaks = seq(1896, 2020, 16)) +
-  scale_y_continuous(limits = c(0, 16), breaks = seq(0, 16, 2))
-
+  scale_fill_manual(values = c(oly_pal[4], oly_pal[2])) +
+  scale_colour_manual(values = c(oly_pal[2], oly_pal[4])) +
+  scale_y_continuous(limits = c(0, 100), breaks = seq(0, 100, 20)) +
+  ggsave(here::here('plots', 'peak_gold.png'), height = 6, width = 4 *16/9)
 
 ### PLOT 7 - COUNTRIES PER GAME -----------------------------------------------
 # Number of participating countries
@@ -308,7 +280,7 @@ men_100m %>%
   scale_x_continuous(limits = c(1896, 2024), breaks = seq(1896, 2020, 16))
 
 
-### PLOT 9 - Participants PER GAME -----------------------------------------------
+### PLOT 9 - PARTICIPANTS PER GAME -----------------------------------------------
 # Number of participants, adjusting for where a competitor takes part in more
 # than 1 event, so has more than 1 observation per games
 total_part <- oly %>%  
