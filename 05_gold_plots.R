@@ -76,5 +76,3 @@ gold_rio %>%
   scale_y_continuous(limits = c(0, 6), breaks = seq(0, 6, 1)) +
   ggsave(here::here('plots', 'gold_per_gdp.png'), height = 6, width = 4 *16/9)
 
-oly %>% 
-  filter(Team == "Uzbekistan" & Year == 2016 & Medal == "Gold")

@@ -50,15 +50,21 @@ oly_host <- oly_simple %>%
   mutate(host_games = ifelse(country == host_country, T, F))
 
 # Join lat_long data
-lat_long_summary <- lat_long_org %>% 
-  select(geounit, Latitude, Longitude) %>% 
+lat_long_summary <- lat_long_org %>%  
+  select(geounit, iso_a3, Latitude, Longitude) %>% 
   write_rds(here::here('tidy', 'lat_long_summary.rds'))
 
 # Dataframe to use for analysis
+# Fix up missing iso_a3 codes
 oly <- oly_host %>% 
   left_join(lat_long_summary, by = c('country' = 'geounit')) %>% 
   left_join(gdp_clean, by = c('country' = 'country', 'Year' = 'year')) %>%
+  mutate(iso_a3 = ifelse(country == 'East Germany'| country == 'West Germany', 'GER', iso_a3),
+         iso_a3 = ifelse(country == 'Soviet Union' | country == 'Unified Team' | country == "Individual Olympic Athletes", 'RUS', iso_a3),
+         iso_a3 = ifelse(country == 'Australasia', 'AUS', iso_a3)) %>% 
   write_rds(here::here('tidy', 'oly.rds'))
+
+
 
 
 

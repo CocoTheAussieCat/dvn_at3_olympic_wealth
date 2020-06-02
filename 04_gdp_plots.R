@@ -32,7 +32,7 @@ event_gdp <- oly %>%
   arrange(desc(gdp_event)) %>% 
   glimpse()
 
-### PLOT 1: GDP per capita by sport in 2016 -----------------------------------
+### GDP per capita by sport in 2016 -----------------------------------
 sport_gdp <- oly %>% 
   filter(Year == 2016) %>% 
   drop_na() %>% 
@@ -44,8 +44,6 @@ sport_gdp <- oly %>%
                               gdp_sport/10^3 >= 25 ~'Middle',
                               gdp_sport/10^3 < 25~'Lowest')) %>% 
   glimpse()
-
-
 
 ### PLOT 1 HIGHEST AND LOWEST GDP PER CAPITA SPORTS ---------------------------
 sport_gdp %>% 
@@ -217,3 +215,59 @@ season_gdp_summary %>%
   oly_theme +
   theme(legend.position = "bottom", legend.direction = "horizontal") +
   ggsave(here::here('plots', 'summer_gdp_country.png'), height = 4, width = 4 *16/9)
+
+### PLOT 4 - GDP PER SPORT 1996-2016 ------------------------------------------
+### Mean GDP per capita for sports in 1996-2016
+sport_allyrs_gdp <- oly %>% 
+  filter(Year >=1994) %>% 
+  drop_na() %>% 
+  group_by(Sport, Season) %>% 
+  summarise(gdp_sport = sum(gdp)/n()) %>% 
+  arrange(desc(gdp_sport)) %>% 
+  mutate(rank = row_number(),
+         position = case_when(gdp_sport/10^3 >= 30 ~'Highest',
+                              gdp_sport/10^3 >= 25 ~'Middle',
+                              gdp_sport/10^3 < 25~'Lowest')) %>% 
+  glimpse()
+
+# Summer Games plot 1996-2016
+sport_allyrs_gdp %>% 
+  filter(Season == 'Summer') %>% 
+  ggplot(aes(x = reorder(Sport, gdp_sport), y = gdp_sport/10^3)) +
+  geom_point(aes(colour = position)) +
+  geom_segment(aes(xend = Sport, yend = 0, colour = position)) +
+  coord_flip() +
+  oly_theme +
+  theme(panel.grid.major.x = element_blank(),
+        legend.position = "None",
+        strip.text = element_blank(),
+        panel.grid.major = element_blank()) +
+  labs(title = 'Mean GDP per capita of countries by sport, All Summer Games 1996-2016',
+       caption = 'GDP per capita in thousands of US dollars, 2010 nominal terms \nGDP per capita weighted by number of participants from each country',
+       x = '',
+       y = '') +
+  scale_color_manual(values = c(oly_pal[9], oly_pal [2], oly_pal[4])) +
+  scale_y_continuous(limits = c(0, 50), breaks = seq(0, 50, 10), 
+                     labels = dollar_format(suffix = "k")) +
+  ggsave(here::here('plots', 'gdp_allyrs_sport.png'), height = 6, width = 4 *16/9)
+
+# Winter Games plot 1994-2014
+sport_allyrs_gdp %>% 
+  filter(Season == 'Winter') %>% 
+  ggplot(aes(x = reorder(Sport, gdp_sport), y = gdp_sport/10^3)) +
+  geom_point(aes(colour = position)) +
+  geom_segment(aes(xend = Sport, yend = 0, colour = position)) +
+  coord_flip() +
+  oly_theme +
+  theme(panel.grid.major.x = element_blank(),
+        legend.position = "None",
+        strip.text = element_blank(),
+        panel.grid.major = element_blank()) +
+  labs(title = 'Mean GDP per capita of countries by sport, All Winter Games 1994-2014',
+       caption = 'GDP per capita in thousands of US dollars, 2010 nominal terms \nGDP per capita weighted by number of participants from each country',
+       x = '',
+       y = '') +
+  scale_color_manual(values = c(oly_pal[9], oly_pal[4])) +
+  scale_y_continuous(limits = c(0, 50), breaks = seq(0, 50, 10), 
+                     labels = dollar_format(suffix = "k")) +
+  ggsave(here::here('plots', 'gdp_winter_allyrs_sport.png'), height = 4, width = 4 *16/9)

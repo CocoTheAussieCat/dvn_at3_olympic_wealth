@@ -40,4 +40,9 @@ gdp_clean <- gdp_org %>%
   select(-oly_country) %>% 
   write_rds(here::here('olympic_data', 'gdp_clean.rds'))
 
+# 4. Soviet Union GDP from UNDataExplorer
+ussr_org <- read_csv(here::here('olympic_data', 'soviet_gdp.csv')) %>% 
+  glimpse()
+
+
 
